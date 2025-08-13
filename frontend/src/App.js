@@ -1,35 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+
 function App() {
-  const [authMessage, setAuthMessage] = useState("Loading from Auth API...");
-  const [backendMessage, setBackendMessage] = useState("Loading from Backend API...");
-
-  useEffect(() => {
-    fetch('/api/auth')
-      .then(response => response.json())
-      .then(data => setAuthMessage(data.message))
-      .catch(error => setAuthMessage(`Error: ${error}`));
-
-    fetch('/api/backend')
-      .then(response => response.json())
-      .then(data => setBackendMessage(data.message))
-      .catch(error => setBackendMessage(`Error: ${error}`));
-  }, []);
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p style={{ color: '#61DAFB' }}>
-          Message from Auth API: <strong>{authMessage}</strong>
-        </p>
-        <p style={{ color: '#41B883' }}>
-          Message from Backend API: <strong>{backendMessage}</strong>
-        </p>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <nav style={{ padding: '1rem', backgroundColor: '#282c34', width: '100%' }}>
+          <Link to="/" style={{ color: 'white', marginRight: '1rem' }}>Home</Link>
+          <Link to="/login" style={{ color: 'white', marginRight: '1rem' }}>Login</Link>
+          <Link to="/register" style={{ color: 'white' }}>Register</Link>
+        </nav>
+        <header className="App-header">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Routes>
+        </header>
+      </div>
+    </Router>
   );
 }
 
