@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import DjangoDataPage from './pages/DjangoDataPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           {isAuthenticated ? (
             <>
               <Link to="/profile" style={{ color: 'white', marginRight: '1rem' }}>Profile</Link>
+              <Link to="/django-data" style={{ color: 'white', marginRight: '1rem' }}>Django Data</Link>
               <button onClick={logout} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 0, fontSize: '1em' }}>Logout</button>
             </>
           ) : (
@@ -36,11 +38,11 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route
               path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
+            />
+            <Route
+              path="/django-data"
+              element={<ProtectedRoute><DjangoDataPage /></ProtectedRoute>}
             />
           </Routes>
         </header>
