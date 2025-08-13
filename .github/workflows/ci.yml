@@ -19,11 +19,15 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Create auth-api .env file
+        run: |
+          echo "DATABASE_URL=${{ secrets.AUTH_API_DATABASE_URL }}" > auth-api/.env
+
       - name: Install dependencies for auth-api
         run: pip install -r auth-api/requirements.txt
       
       - name: Run auth-api tests
-        run: pytest auth-api/tests
+        run: PYTHONPATH=. pytest auth-api
 
       - name: Install dependencies for backend-api
         run: pip install -r backend-api/requirements.txt
