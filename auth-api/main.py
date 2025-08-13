@@ -1,30 +1,32 @@
 import os
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
-
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 from passlib.context import CryptContext
+from jose import JWTError, jwt
 
 from database import engine, create_db_and_tables
 from models import User
 from schemas import UserCreate, UserRead
 
-from jose import JWTError, jwt
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("INFO:     Creating database and tables...")
+    create_db_and_tables()
+    yield
+    print("INFO:     Application shutdown.")
 
+app = FastAPI(lifespan=lifespan)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_session():
     with Session(engine) as session:
         yield session
-
-app = FastAPI()
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
 
 origins = [
     "http://localhost",
