@@ -21,4 +21,5 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.health_check),
+    path('protected/', views.ProtectedView.as_view(), name='protected-view'),
 ]
