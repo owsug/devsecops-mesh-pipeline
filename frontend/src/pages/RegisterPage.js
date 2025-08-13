@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState(''); // To display success/error messages
+  const [message, setMessage] = useState('');
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent the browser from reloading the page
+    event.preventDefault();
 
     try {
       const response = await fetch('/api/auth/register', {
@@ -21,7 +21,6 @@ function RegisterPage() {
         const data = await response.json();
         setMessage(`User registered successfully! User ID: ${data.id}`);
       } else {
-        // Handle server-side errors (e.g., username already exists)
         const errorData = await response.json();
         setMessage(`Registration failed: ${errorData.detail || 'Unknown error'}`);
       }

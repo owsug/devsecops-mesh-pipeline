@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import { loginUser } from '../api/auth'; // Import from the new API file
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setMessage('');
-        try {
-            const response = await loginUser(username, password); // Use the new function
-            if (response.ok) {
-                const data = await response.json();
-                setMessage(`Login Successful!`);
-                alert(`Your Token: ${data.access_token}`);
-            } else {
-                setMessage('Login failed: Incorrect username or password.');
-            }
-        } catch (error) {
-            setMessage('Login failed: Could not connect to the server.');
+
+        const success = await login(username, password);
+
+        if (success) {
+            setMessage('Login Successful!');
+            navigate('/');
+        } else {
+            setMessage('Login failed: Incorrect username or password.');
         }
     };
 
