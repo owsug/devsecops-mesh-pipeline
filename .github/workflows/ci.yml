@@ -1,41 +1,52 @@
 name: CI/CD Pipeline
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # This job runs the backend tests
   backend-tests:
     name: Run Backend Tests
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Check out code
         uses: actions/checkout@v4
 
+      # Sets up a Python environment for use in actions
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # Creates a temporary .env file for the auth-api using GitHub Secrets
       - name: Create auth-api .env file
         run: |
           echo "DATABASE_URL=${{ secrets.AUTH_API_DATABASE_URL }}" > auth-api/.env
+          echo "SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> auth-api/.env
+          echo "ALGORITHM=${{ secrets.JWT_ALGORITHM }}" >> auth-api/.env
+          echo "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.JWT_ACCESS_TOKEN_EXPIRE_MINUTES }}" >> auth-api/.env
 
+      # Installs the Python dependencies for the auth-api
       - name: Install dependencies for auth-api
         run: pip install -r auth-api/requirements.txt
       
+      # Runs the pytest tests for the auth-api
       - name: Run auth-api tests
         run: PYTHONPATH=. pytest auth-api
-
-      - name: Install dependencies for backend-api
-        run: pip install -r backend-api/requirements.txt
       
-      # You would add tests for the backend-api here as well
-      # - name: Run backend-api tests
-      #   run: pytest backend-api/tests
+      # (Optional) You would add steps here to create a .env and run tests for the backend-api as well
 
+  # This job builds and pushes the Docker images
   build-and-push-images:
     name: Build and Push Docker Images
     # This job will only run if the 'backend-tests' job is successful
@@ -45,12 +56,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      # Logs in to your Docker Hub account
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Builds and pushes the auth-api image
       - name: Build and push auth-api image
         uses: docker/build-push-action@v5
         with:
@@ -58,6 +71,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/auth-api:latest
 
+      # Builds and pushes the backend-api image
       - name: Build and push backend-api image
         uses: docker/build-push-action@v5
         with:
@@ -65,6 +79,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-api:latest
 
+      # Builds and pushes the frontend image
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:
