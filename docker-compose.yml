@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+
+  auth-api:
+    build: ./auth-api
+    ports:
+      - "8000:8000"
+
+  backend-api:
+    build: ./backend-api
+    ports:
+      - "8001:8001"

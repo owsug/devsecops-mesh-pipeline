@@ -1,0 +1,22 @@
+# docker-compose -f docker-compose.dev.yml up --build
+services:
+  frontend:
+    build:
+      context: ./frontend
+      target: builder 
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+
+  auth-api:
+    build: ./auth-api
+    ports:
+      - "8000:8000"
+
+  backend-api:
+    build: ./backend-api
+    ports:
+      - "8001:8001"
