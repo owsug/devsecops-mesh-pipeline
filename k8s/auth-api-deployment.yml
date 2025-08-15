@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api-deployment
+spec:
+  replicas: 1 # Run one instance of our application
+  selector:
+    matchLabels:
+      app: auth-api
+  template: # This is the template for the Pods
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      serviceAccountName: auth-api-sa # Use the ServiceAccount we created
+      containers:
+        - name: auth-api
+          image: owsug/auth-api:latest
+          ports:
+            - containerPort: 8000
+          # Load all environment variables from the Secret we created
+          envFrom:
+            - secretRef:
+                name: auth-api-secret

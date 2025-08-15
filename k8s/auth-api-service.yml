@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-api-service
+spec:
+  type: NodePort # Exposes the Service on each Node's IP at a static port
+  selector:
+    app: auth-api # This must match the 'app' label in your Deployment's Pod template
+  ports:
+    - protocol: TCP
+      port: 8000 # The port inside the cluster
+      targetPort: 8000 # The port on the Pod
+      # nodePort: 30007 # Optional: specify a port, otherwise Kubernetes assigns one

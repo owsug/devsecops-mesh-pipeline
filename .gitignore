@@ -8,3 +8,5 @@ Thumbs.db
 
 **/venv/
 .env
+
+k8s/*-secret.yml
